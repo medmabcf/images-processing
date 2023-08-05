@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +26,11 @@ SECRET_KEY = "django-insecure-+t_40x+*7x8s%&*%x(b*0oxa@5y9gd^31jx&f^2&u2tysl%_go
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# Base url to serve media files
+MEDIA_URL = 'uploaded_images/'
 
+# Path where media is stored
+MEDIA_ROOT = os.path.join("./", 'uploaded_images/')
 
 # Application definition
 
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "processapp",
 ]
 
 MIDDLEWARE = [
@@ -72,11 +77,14 @@ WSGI_APPLICATION = "imageprocessing.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'P_image',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 

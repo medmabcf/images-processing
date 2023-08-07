@@ -1,6 +1,0 @@
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}   {{ form.as_p }}  
-  <button type="submit">Upload</button>
-  </form>{% if img_obj %}  <h3>Succesfully uploaded : {{img_obj.title}}</h3> 
-   <img src="uploaded_images/images/Im001_1_-_Copy.jpg" alt="connect" style="max-height:300px">
-  {% endif %}

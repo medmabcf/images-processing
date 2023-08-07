@@ -1,0 +1,14 @@
+{% load static %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}   {{ form.as_p }}  
+  <button type="submit" name="form1">Upload</button>
+</form>
+<form id="form2" method="post"  enctype="multipart/form-data">
+  {% csrf_token %}
+  {% if img_obj %}  <h3>Succesfully uploaded : {{img_obj.title}}</h3> 
+    <img id="image" src="{{ img_obj.image.url }}" style="display: none;">
+    <canvas id="canvas"></canvas>
+{% endif %}
+<button id="ok-button">OK</button>
+<script src="{% static 'draw-box.js' %}"></script>
+</form>

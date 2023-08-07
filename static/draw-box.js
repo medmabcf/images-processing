@@ -1,5 +1,6 @@
 
-const form = document.getElementById('form2');
+console.log("cefkvef");
+const form = document.getElementById('form1');
 const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -23,6 +24,7 @@ canvas.addEventListener('mousedown', (e) => {
     isDrawing = true;
     startX = e.offsetX;
     startY = e.offsetY;
+    console.log(startX);
 });
 
 canvas.addEventListener('mousemove', (e) => {
@@ -50,19 +52,14 @@ canvas.addEventListener('mouseup', (e) => {
     endX: endX,
     endY: endY,
 };
-
 const okButton = document.getElementById('ok-button');
 
 okButton.addEventListener('click', () => {
-    // Submit the box coordinates to your Django view
-    const data = {
-        startX: startX,
-        startY: startY,
-        endX: endX,
-        endY: endY,
-    };
+    // Log the data object
+    console.log(data);
 
-    fetch('http://127.0.0.1:8000/processapp/image_upload_view/', {
+    // Submit the box coordinates to your Django view
+    fetch('http://127.0.0.1:8000/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -71,5 +68,6 @@ okButton.addEventListener('click', () => {
         body: JSON.stringify(data),
     });
 });
+
 
 

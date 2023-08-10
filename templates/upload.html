@@ -1,13 +1,23 @@
 {% load static %}
-<form id="form1" method="post"  enctype="multipart/form-data">
-    {% csrf_token %}   {{ form.as_p }}  
-  <button type="submit" name="b1">Upload</button>
+<form id="form1" method="post" enctype="multipart/form-data">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" name="b1">Upload</button>
 
-
-  {% if img_obj %}  <h3>Succesfully uploaded : {{img_obj.title}}</h3> 
-    <img id="image" src="{{ img_obj.image.url }}"style="display: none;" >
-    <canvas id="canvas"></canvas>
-{% endif %}
-<button id="ok-button" name="b2">OK</button>
-<script src="{% static 'draw-box.js' %}"></script>
+    {% if img_obj %}
+        <h3>Succesfully uploaded: {{ img_obj.title }}</h3>
+        <div class="images">
+            <img id="image" src="{{ img_obj.image.url }}" style="display: none;">
+            <canvas id="canvas"></canvas>
+            <!-- Add another img element here -->
+            <img id="image2" src="{{ img_obj2.image.url }}">
+        </div>
+    {% endif %}
+    <button id="ok-button" name="b2">OK</button>
+    <script src="{% static 'draw-box.js' %}"></script>
 </form>
+
+<style>
+    .images {
+        display: flex;
+    }
+</style>

@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .forms import MyForm
-
+from django.conf import settings
+import os
+import supervision as sv
 import json
 from django.http import HttpResponse
 
@@ -22,29 +24,8 @@ def image_upload_view(request):
         if 'title' in request.POST:
             form = ImageForm(request.POST, request.FILES)
             if form.is_valid():
-                           # Get the uploaded image from the form
-                image = form.cleaned_data['image']
-
-                
-                # Read the image data into a NumPy array
-                img_data = np.asarray(bytearray(image.read()), dtype=np.uint8)
-                # Read the image data using cv2
-                img = cv2.imdecode(img_data, cv2.IMREAD_UNCHANGED)
-
-                # Resize the image
-                scale=img.shape[0]/img.shape[1]
-                new_width = 1000
-                new_height = (int)(1000*scale)
-                img_resized = cv2.resize(img, (new_width, new_height))
-                # Encode the resized image as JPEG
-                _, img_encoded = cv2.imencode('.jpg', img_resized)
-
-                # Update the image field of the Image model instance
-                instance = form.save(commit=False)
-                instance.image.save(image.name, ContentFile(img_encoded.tobytes()), save=False)
-
-                # Save the form data to the database
-                instance.save()
+            
+                form.save()
 
                 img_obj = form.instance
                 
@@ -54,14 +35,64 @@ def image_upload_view(request):
                 return render(request, 'upload.html', {'form': form})
         else :
             data = json.loads(request.body)
-            startX = data['startX']
-            startY = data['startY']
-            endX = data['endX']
-            endY = data['endY']
+            # Process the data and create the objects to return
+            xyxy =  data['cord']
+            url =  data['path']
+          
+           
+            
+               
+                
+                
+        
+
+            
+            IMAGE_PATH=os.path.join(settings.MEDIA_ROOT, url[url.find('a')+2:])
+            print(IMAGE_PATH)
+          
+            centerX = xyxy['centerX']
+            centerY = xyxy['centerY']
+            width=xyxy['image_width']
+            height=xyxy['image_height']
+            
+            box = np.array([
+            centerX,
+            centerY,
+            centerX + width,
+            centerY + height
+            ])
+            CHECKPOINT_PATH="C:/Users/21653/Desktop/imageprocessing/models/sam_vit_h_4b8939.pth"
+            MODEL_TYPE = "vit_h"
+            print(box)
+            from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
+            sam = sam_model_registry[MODEL_TYPE](checkpoint=CHECKPOINT_PATH)
+            mask_predictor = SamPredictor(sam)
+           
+            
+
+            image_bgr = cv2.imread(IMAGE_PATH)
+            image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+
+            mask_predictor.set_image(image_rgb)
+
+            masks, scores, logits = mask_predictor.predict(
+                box=box,
+                multimask_output=True
+            )
+            original_image=cv2.imread(IMAGE_PATH)
+            img=np.zeros(original_image.shape)
+            img[:,:,:]=[255,255,255]
+            img[masks[2,:,:]]=original_image[masks[2,:,:]]
+            cv2.imwrite("C:/Users/21653/Desktop/imageprocessing/models/test.jpg",img)
+            
+            
+
+            
+            return JsonResponse({'status': 'success'})
             
             # Process the submitted data here
 
-            return JsonResponse({'status': 'success'})
+            
     elif request.method == 'GET':
         form = ImageForm()    
         return render(request, 'upload.html', {'form': form})

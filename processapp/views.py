@@ -50,16 +50,13 @@ def image_upload_view(request):
             IMAGE_PATH=os.path.join(settings.MEDIA_ROOT, url[url.find('a')+2:])
             print(IMAGE_PATH)
           
-            centerX = xyxy['centerX']
-            centerY = xyxy['centerY']
-            width=xyxy['image_width']
-            height=xyxy['image_height']
+          
             
             box = np.array([
-            centerX,
-            centerY,
-            centerX + width,
-            centerY + height
+            xyxy['Xmin'],
+            xyxy['Ymin'],
+            xyxy['Xmax'],
+            xyxy['Ymax']
             ])
             CHECKPOINT_PATH="C:/Users/21653/Desktop/imageprocessing/models/sam_vit_h_4b8939.pth"
             MODEL_TYPE = "vit_h"
@@ -80,10 +77,11 @@ def image_upload_view(request):
                 multimask_output=True
             )
             original_image=cv2.imread(IMAGE_PATH)
+            
             img=np.zeros(original_image.shape)
             img[:,:,:]=[255,255,255]
             img[masks[2,:,:]]=original_image[masks[2,:,:]]
-            cv2.imwrite("C:/Users/21653/Desktop/imageprocessing/models/test.jpg",img)
+            cv2.imwrite("C:/Users/21653/Desktop/imageprocessing/models/test1.jpg",img)
             
             
 

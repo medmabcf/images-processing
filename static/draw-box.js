@@ -40,7 +40,7 @@ canvas.addEventListener('mousedown', (e) => {
     startX = e.offsetX;
     startY = e.offsetY;
 
-    console.log(startX);
+    
 
     updateData();
     
@@ -91,25 +91,27 @@ const okButton = document.getElementById('ok-button');
 
 okButton.addEventListener('click', () => {
     // Log the data object
-    console.log(data);
+   
 
       // Submit the box coordinates to your Django view
   var [new_width, new_height] = resizeImage(image);
-  var width_scale=image.naturalWidth/new_width
-  var height_scale=image.naturalHeight/new_height
+  var width_scale=image.naturalWidth/new_width;
+  var height_scale=image.naturalHeight/new_height;
+  console.log(data);
     startX*=width_scale,
     startY*=height_scale,
    endX*=width_scale,
    endY*=height_scale,
    updateData()
-    console.log(data);
-    const centerdata = {
-        centerX : (startX + endX) / 2,
-        centerY : (startY + endY) / 2,
-        image_width : image.naturalWidth,
-        image_height : image.naturalHeight,
+  console.log(data);
+    var  xyxy = {
+        Xmin : Math.min(startX,endX),
+        Ymin : Math.min(startY,endY),
+        Xmax :Math.max(startX,endX),
+        Ymax :Math.max(startY,endY),
     };
-
+    console.log("nzck,cer")
+    console.log(xyxy,"ijcvilkvfdokv");
     // Submit the box coordinates to your Django view
     fetch('http://127.0.0.1:8000/', {
         method: 'POST',
@@ -117,7 +119,7 @@ okButton.addEventListener('click', () => {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrftoken,
         },
-        body: JSON.stringify({cord:centerdata,path:image.src}),
+        body: JSON.stringify({cord:xyxy,path:image.src}),
     });
 });
 
